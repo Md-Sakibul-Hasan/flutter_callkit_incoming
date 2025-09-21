@@ -331,15 +331,31 @@ class CallkitIncomingActivity : Activity() {
         }
     }
 
-    private fun onDeclineClick() {
-        // Log.d("CallkitIncomingActivity", "[CALLKIT] 📱 onDeclineClick")
-        val data = intent.extras?.getBundle(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA)
+//    private fun onDeclineClick() {
+//        // Log.d("CallkitIncomingActivity", "[CALLKIT] 📱 onDeclineClick")
+//        val data = intent.extras?.getBundle(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA)
+//
+//        val intent =
+//            CallkitIncomingBroadcastReceiver.getIntentDecline(this@CallkitIncomingActivity, data)
+//        sendBroadcast(intent)
+//        finishTask()
+//    }
+private fun onDeclineClick() {
+    val data = intent.extras?.getBundle(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA)
 
-        val intent =
-            CallkitIncomingBroadcastReceiver.getIntentDecline(this@CallkitIncomingActivity, data)
-        sendBroadcast(intent)
-        finishTask()
+    // Original explicit broadcast (preserves existing functionality)
+    val explicitIntent = CallkitIncomingBroadcastReceiver.getIntentDecline(this@CallkitIncomingActivity, data)
+    sendBroadcast(explicitIntent)
+
+    // NEW: Add implicit broadcast for terminated state handling
+    val implicitIntent = Intent().apply {
+        action = "com.hiennv.flutter_callkit_incoming.ACTION_CALL_DECLINE"
+        putExtra(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA, data)
     }
+    sendBroadcast(implicitIntent)
+
+    finishTask()
+}
 
     private fun finishDelayed() {
         Handler(Looper.getMainLooper()).postDelayed({
