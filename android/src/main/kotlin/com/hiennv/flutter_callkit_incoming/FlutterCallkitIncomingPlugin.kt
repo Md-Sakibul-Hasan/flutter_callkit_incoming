@@ -48,7 +48,7 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
 //                it.get()?.send(event, body)
 //            }
 //        }
-fun sendEvent(event: String, body: Map<String, Any>) {
+fun sendEvent(event: String, body: Map<String, Any?>) {
     // Existing event handling (broadcast to event channel listeners)
     eventHandlers.reapCollection().forEach { it.get()?.send(event, body) }
 
