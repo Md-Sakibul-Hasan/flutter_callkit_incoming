@@ -43,11 +43,30 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
         private val eventCallbacks = mutableListOf<WeakReference<CallkitEventCallback>>()
 
-        fun sendEvent(event: String, body: Map<String, Any?>) {
-            eventHandlers.reapCollection().forEach {
-                it.get()?.send(event, body)
+//        fun sendEvent(event: String, body: Map<String, Any?>) {
+//            eventHandlers.reapCollection().forEach {
+//                it.get()?.send(event, body)
+//            }
+//        }
+fun sendEvent(event: String, body: Map<String, Any>) {
+    // Existing event handling (broadcast to event channel listeners)
+    eventHandlers.reapCollection().forEach { it.get()?.send(event, body) }
+
+    // Extra handling for decline
+    if (event == CallkitConstants.ACTION_CALL_DECLINE) {
+        for ((_, channel) in methodChannels) {
+            try {
+                channel.invokeMethod("CALL_DECLINED_CUSTOM", mapOf(
+                    "reason" to "user_declined",
+                    "callData" to body
+                ))
+            } catch (e: Exception) {
+                android.util.Log.d(EXTRA_CALLKIT_CALL_DATA, "Error sending custom decline: $e")
             }
         }
+    }
+}
+
 
         public fun sendEventCustom(event: String, body: Map<String, Any>) {
             eventHandlers.reapCollection().forEach {
