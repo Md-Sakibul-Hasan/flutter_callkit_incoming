@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
@@ -37,11 +38,15 @@ class FlutterCallkitIncoming {
   /// Show Callkit Incoming.
   /// On iOS, using Callkit. On Android, using a custom UI.
   static Future showCallkitIncoming(CallKitParams params) async {
+    log('showCallkitIncoming start');
     _channel.setMethodCallHandler((call) async {
+      log('showCallkitIncoming call.method=${call.method}');
+      log('showCallkitIncoming call.arguments=${call.arguments}');
       if (call.method == 'CALL_DECLINED_CUSTOM') {
         params.onDecline?.call(call.arguments);
       }
     });
+    log('showCallkitIncoming end');
     await _channel.invokeMethod("showCallkitIncoming", params.toJson());
   }
 
