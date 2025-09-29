@@ -49,16 +49,16 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
 //            }
 //        }
 fun sendEvent(event: String, body: Map<String, Any?>) {
-    android.util.Log.d('reject_event', "called sendEvent")
+    android.util.Log.d("reject_event", "called sendEvent")
     // Existing event handling (broadcast to event channel listeners)
     eventHandlers.reapCollection().forEach { it.get()?.send(event, body) }
-    android.util.Log.d('reject_event', "sendEvent=$event")
+    android.util.Log.d("reject_event", "sendEvent=$event")
     // Extra handling for decline
     if (event == CallkitConstants.ACTION_CALL_DECLINE) {
-        android.util.Log.d('reject_event', "if block =ACTION_CALL_DECLINE")
+        android.util.Log.d("reject_event", "if block =ACTION_CALL_DECLINE")
         for ((_, channel) in methodChannels) {
             try {
-                android.util.Log.d('reject_event', "for loop channel name=$channel")
+                android.util.Log.d("reject_event", "for loop channel name=$channel")
 
                 channel.invokeMethod("CALL_DECLINED_CUSTOM", mapOf(
                     "reason" to "user_declined",
@@ -69,7 +69,7 @@ fun sendEvent(event: String, body: Map<String, Any?>) {
             }
         }
     }else{
-        android.util.Log.d('reject_event', "else block")
+        android.util.Log.d("reject_event", "else block")
     }
 }
 
