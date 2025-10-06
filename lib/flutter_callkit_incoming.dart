@@ -40,8 +40,6 @@ class FlutterCallkitIncoming {
   static Future showCallkitIncoming(CallKitParams params) async {
     print('showCallkitIncoming start');
     _channel.setMethodCallHandler((call) async {
-      log('showCallkitIncoming call.method=${call.method}');
-      log('showCallkitIncoming call.arguments=${call.arguments}');
       if (call.method == 'CALL_DECLINED_CUSTOM') {
         params.onDecline?.call(call.arguments);
       }
